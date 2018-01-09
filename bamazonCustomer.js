@@ -9,6 +9,12 @@ var connection = mysql.createConnection ({
     database: "bamazon"
 });
 
+connection.connect(function(err) {
+    if (err) throw err;
+    console.log("connected as id " + connection.threadId);
+    allItems();
+});
+
 function allItems() {
     connection.query("SELECT * FROM products", function (err, res) {
         if (err) throw err;
@@ -22,14 +28,9 @@ function allItems() {
             \nQuantity: ${res[i].stock_quantity}`);
             console.log("\n---------------------------")
         }
-        connection.end();
+        purchase();
     })
 };
-
-function buyProducts (answerId, answerUnit) {
-    console.log(`Product ID you entered: ${answerId}
-    \nOrder quantity you entered: ${answerUnit}`);
-}
 
 var questions = [
     {
@@ -37,11 +38,11 @@ var questions = [
         message: "Please enter the product ID that you would like to buy.",
         name: "id",
         validate: function idVal(id) {
-            return id !== "";
+            return id !== "" || id > 10;
         },
         filter: Number
 
-    },{
+    }, {
         type: "input",
         message: "How many units of the product they would like to buy?",
         name: "unit",
@@ -51,20 +52,22 @@ var questions = [
         filter: Number  
     }];
 
-inquirer.prompt(questions, answerId, answerUnit);
-    .then(function(inquirerResponse) {
-        if(inquirerResponse.input <= 10) {
-            console.log(inquirerResponse.id);
-            console.log(inquirereResponse.unit);
-        }
-        else {
-            console.log("Invalid Input.");
-        }
-    });
+// var productId = [];
+// var purchasingUnit = [];
 
-connection.connect(function(err) {
-    if (err) throw err;
-    console.log("connected as id " + connection.threadId);
-    allItems();
-});
+function purchase() {
+    inquirer.prompt(questions)
+        .then(function(answers) {
+            let product = answers.questions.id;
+            let quantity = answers.questions.unit;
+            console.log(`** User's Input **
+            \nYou chose item number ${product},
+            \nand quantity of ${quantity}`);
+            inventory();
+    })
+};
+
+function inventory(product, quantity) {
+    
+};
 
