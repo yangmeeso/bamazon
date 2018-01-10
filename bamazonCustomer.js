@@ -32,42 +32,51 @@ function allItems() {
     })
 };
 
-var questions = [
-    {
+var validateInput = (value) => {
+    var input = /^[0-9]+$/;
+        if (inputtxt.value.match(input)) {
+            return true;
+        }
+        else if (value.length == 0) {
+            done('Cannno be empty');
+        }
+        else {
+            done(null, value);
+        }
+};
+
+function purchase() {
+    const questions = () => [{
         type: "input",
         message: "Please enter the product ID that you would like to buy.",
         name: "id",
-        validate: function idVal(id) {
-            return id !== "" || id > 10;
-        },
+        validate: validateInput,
         filter: Number
 
     }, {
         type: "input",
         message: "How many units of the product they would like to buy?",
         name: "unit",
-        validate: function unitVal(unit) {
-            return id !== "";            
-        },
+        validate: validateInput,
         filter: Number  
     }];
 
-// var productId = [];
-// var purchasingUnit = [];
-
-function purchase() {
-    inquirer.prompt(questions)
+    inquirer.prompt([questions])
         .then(function(answers) {
             let product = answers.questions.id;
             let quantity = answers.questions.unit;
             console.log(`** User's Input **
             \nYou chose item number ${product},
             \nand quantity of ${quantity}`);
-            inventory();
+            // inventory();
     })
 };
 
-function inventory(product, quantity) {
+// function inventory(product, quantity) {
     
-};
+// };
+
+// In function inventory, If user's order quantity is larger than the stock. "Insufficient quantity!".
+// After that, update the SQL database to reflect the remaining quantity.
+// Once the update goes through, show the customer the total cost of their purchase.
 
